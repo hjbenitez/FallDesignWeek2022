@@ -21,7 +21,7 @@ public class SampleUserPolling_ReadWrite : MonoBehaviour
     {
         serialController = GameObject.Find("SerialController").GetComponent<SerialController>();
 
-        Debug.Log("Press A or Z to execute some actions");
+        Debug.Log("Find the correct code");
     }
 
     // Executed each frame
@@ -33,46 +33,52 @@ public class SampleUserPolling_ReadWrite : MonoBehaviour
 
         // If you press one of these keys send it to the serial device. A
         // sample serial device that accepts this input is given in the README.
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             serialController.SendSerialMessage("1");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.A))
         {
             serialController.SendSerialMessage("2");
         }
 
-        if(Input.GetKeyDown(KeyCode.Alpha3))
+        if(Input.GetKeyDown(KeyCode.S))
         {
             serialController.SendSerialMessage("3");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha4))
+        if (Input.GetKeyDown(KeyCode.D))
         {
             serialController.SendSerialMessage("4");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha5))
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             serialController.SendSerialMessage("5");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha6))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             serialController.SendSerialMessage("6");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha7))
+        if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             serialController.SendSerialMessage("7");
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha8))
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             serialController.SendSerialMessage("8");
         }
 
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            serialController.SendSerialMessage("0");
+            Debug.Log("Sent");
+
+        }
 
         //---------------------------------------------------------------------
         // Receive data
