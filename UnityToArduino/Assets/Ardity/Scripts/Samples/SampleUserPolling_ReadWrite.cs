@@ -15,6 +15,7 @@ using System.Collections;
 public class SampleUserPolling_ReadWrite : MonoBehaviour
 {
     public SerialController serialController;
+    public AudioSource audioSource;
 
     // Initialization
     void Start()
@@ -36,48 +37,49 @@ public class SampleUserPolling_ReadWrite : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             serialController.SendSerialMessage("1");
+            audioSource.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.A))
         {
             serialController.SendSerialMessage("2");
+            audioSource.Play();
         }
 
         if(Input.GetKeyDown(KeyCode.S))
         {
             serialController.SendSerialMessage("3");
+            audioSource.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.D))
         {
             serialController.SendSerialMessage("4");
+            audioSource.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             serialController.SendSerialMessage("5");
+            audioSource.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             serialController.SendSerialMessage("6");
+            audioSource.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             serialController.SendSerialMessage("7");
+            audioSource.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             serialController.SendSerialMessage("8");
-        }
-
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            serialController.SendSerialMessage("0");
-            Debug.Log("Sent");
-
+            audioSource.Play();
         }
 
         //---------------------------------------------------------------------
