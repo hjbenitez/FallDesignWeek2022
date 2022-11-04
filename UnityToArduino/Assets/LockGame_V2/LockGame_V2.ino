@@ -16,8 +16,8 @@ bool mediumBeaten = false;
 bool hardBeaten = false;
 
 int easyCodeSequence[4] = { 3, 1, 4, 2 };
-int mediumCodeSequence[4] = { 8, 7, 6, 5 };
-int hardCodeSequence[8] = { 8, 7, 6, 5, 4, 3, 2, 1 };
+int mediumCodeSequence[4] = { 8, 5, 7, 6 };
+int hardCodeSequence[8] = { 2, 1, 5, 7, 6, 3, 8, 3 };
 
 int currentSequence[8];
 
@@ -31,40 +31,25 @@ void setup() {
   lockingLug.attach(13);
   lockingLug.write(90);  //locks the lock
   Serial.begin(9600);
-  
 }
-/*
-CODE CYPHER
-1 = W
-2 = A
-3 = S
-4 = D
-5 = UP
-6 = DOWN
-7 = RIGHT
-8 = LEFT
-*/
+
 void loop() {
-  if(!intro2) {
-    Serial.println("intro2");
-    intro2 = true;
+  if (!easyBeaten || !mediumBeaten || !hardBeaten) {
+    display(showNext());
   }
 
-
-  lcd.setCursor(0, 0);
-  lcd.print(displayArray());
   if (!easyBeaten) {
     if (currentSequence[buttonsPressed] == easyCodeSequence[buttonsPressed] && currentSequence[buttonsPressed] != 0) {
       if (ledIndex == buttonsPressed && correctFlash[ledIndex] == false) {
         correctNumber();
+        delay(1000);
+        lcd.clear();
       }
 
       if (buttonsPressed >= 3 && currentSequence[3] == easyCodeSequence[3]) {
-        Serial.println("Correct Code! Tutorial 1 Done!");
         digitalWrite(8, HIGH);
         lcd.clear();
-        lcd.setCursor(0, 1);
-        lcd.print("CORRECT!");
+        display("CORRECT!");
         Serial.println("done1");
 
         delay(5000);  //wait x amount of seconds to relock the lock
@@ -80,9 +65,11 @@ void loop() {
       buttonsPressed--;
       removeFromSequence();
       lockingLug.write(90);
-      digitalWrite(8, LOW);   
+      digitalWrite(8, LOW);
       lcd.clear();
       wrongOrder();
+      delay(1000);
+      lcd.clear();
     }
   }
 
@@ -90,14 +77,15 @@ void loop() {
     if (currentSequence[buttonsPressed] == mediumCodeSequence[buttonsPressed] && currentSequence[buttonsPressed] != 0) {
       if (ledIndex == buttonsPressed && correctFlash[ledIndex] == false) {
         correctNumber();
+        delay(1000);
+        lcd.clear();
       }
 
       if (buttonsPressed >= 3 && currentSequence[3] == mediumCodeSequence[3]) {
         Serial.println("Correct Code! Tutorial 2 Done!");
         digitalWrite(8, HIGH);
         lcd.clear();
-        lcd.setCursor(0, 1);
-        lcd.print("CORRECT!");
+        display("CORRECT!");
 
         memset(currentSequence, 0, sizeof(currentSequence));
         buttonsPressed = -1;
@@ -109,48 +97,61 @@ void loop() {
         mediumBeaten = true;
       }
     } else if (currentSequence[buttonsPressed] != mediumCodeSequence[buttonsPressed] && buttonsPressed != -1) {
-      Serial.println("Incorrect Code");
       buttonsPressed--;
       removeFromSequence();
       lockingLug.write(90);
-      digitalWrite(8, LOW);   
+      digitalWrite(8, LOW);
       lcd.clear();
       wrongOrder();
+      delay(1000);
+      lcd.clear();
     }
 
   } else if (!hardBeaten) {
     if (currentSequence[buttonsPressed] == hardCodeSequence[buttonsPressed] && currentSequence[buttonsPressed] != 0) {
       if (ledIndex == buttonsPressed && correctFlash[ledIndex] == false) {
         correctNumber();
+        delay(1000);
+        lcd.clear();
       }
 
       if (buttonsPressed >= 7 && currentSequence[7] == hardCodeSequence[7]) {
         Serial.println("Correct Code! LockPickingLawyer would be proud!!");
         Serial.println("done3");
+        display("WELL DONE!");
         delay(7000);
         lockingLug.write(0);  //unlocks lock
-        
+
         digitalWrite(8, HIGH);
         lcd.clear();
-        lcd.setCursor(0, 1);
-        lcd.print("CANDY TIME");
+        display("CANDY TIME!");
 
         memset(currentSequence, 0, sizeof(currentSequence));
         buttonsPressed = -1;
-       
+
         delay(5000);  //wait x amount of seconds to relock the lock
 
         reset();
+        hardBeaten = true;
       }
     } else if (currentSequence[buttonsPressed] != hardCodeSequence[buttonsPressed] && buttonsPressed != -1) {
       Serial.println("Incorrect Code");
       buttonsPressed--;
       removeFromSequence();
       lockingLug.write(90);
-      digitalWrite(8, LOW);   
+      digitalWrite(8, LOW);
       lcd.clear();
       wrongOrder();
+      delay(1000);
+      lcd.clear();
     }
+  }
+
+  else {
+    lcd.setCursor(0, 0);
+    lcd.print("THANKS FOR");
+    lcd.setCursor(0, 1);
+    lcd.print("PLAYING <3");
   }
 
   // Send some message when I receive 1-8 from the row of numbers
@@ -202,13 +203,11 @@ void loop() {
       lockingLug.write(90);
       break;
   }
-  
 }
 
 void correctNumber() {
   lcd.clear();
-  lcd.setCursor(0, 1);
-  lcd.print(smarty());
+  display(smarty());
   digitalWrite(8, HIGH);
   delay(200);
   digitalWrite(8, LOW);
@@ -255,7 +254,7 @@ String dummy() {
       break;
 
     case 1:
-      string = "Crap!";
+      string = "L + Ratio!";
       break;
 
     case 2:
@@ -298,8 +297,7 @@ void wrongOrder() {
   digitalWrite(9, HIGH);
   digitalWrite(8, LOW);
 
-  lcd.setCursor(0, 1);
-  lcd.print(dummy());
+  display(dummy());
 
   delay(300);
   digitalWrite(9, LOW);
@@ -315,14 +313,14 @@ void assignValueToSequence(int num) {
   }
 
   buttonsPressed++;
-  if(!firstButton) {
+  if (!firstButton) {
     Serial.println("firstButton");
     firstButton = true;
   }
 }
 
 String displayArray() {
-  String code = "";
+  code = "";
   for (int i = 0; i < 8; i++) {
     if (currentSequence[i] != 0) {
       code += currentSequence[i];
@@ -337,10 +335,114 @@ String displayArray() {
 }
 
 void removeFromSequence() {
-  for (int i = 0; i < 8; i++) {
-    if (currentSequence[i] == 0) {
-      currentSequence[i - 1] = 0;
-      break;
+  currentSequence[buttonsPressed + 1] = 0;
+}
+
+void display(String bottomText) {
+  lcd.setCursor(0, 0);
+  lcd.print(displayArray());
+  lcd.setCursor(0, 1);
+  lcd.print(bottomText);
+}
+String showNext() {
+  /*
+CODE CYPHER
+1 = W - UP LEFT
+2 = A - UP RIGHT
+3 = S - DOWN RIGHT
+4 = D - DOWN LEFT
+5 = UP - UP ARROW
+6 = DOWN - DOWN ARROW
+7 = LEFT - LEFT ARROW 
+8 = RIGHT - RIGHT ARROW
+*/
+  String direction;
+
+  if (!easyBeaten) {
+    switch (easyCodeSequence[buttonsPressed + 1]) {
+      case 1:
+        direction = "UP LEFT";
+        break;
+      case 2:
+        direction = "UP RIGHT";
+        break;
+      case 3:
+        direction = "DOWN RIGHT";
+        break;
+      case 4:
+        direction = "DOWN LEFT";
+        break;
+      case 5:
+        direction = "UP";
+        break;
+      case 6:
+        direction = "DOWN";
+        break;
+      case 7:
+        direction = "LEFT";
+        break;
+      case 8:
+        direction = "RIGHT";
+        break;
     }
   }
+
+  else if (!mediumBeaten) {
+    switch (mediumCodeSequence[buttonsPressed + 1]) {
+      case 1:
+        direction = "UP LEFT";
+        break;
+      case 2:
+        direction = "UP RIGHT";
+        break;
+      case 3:
+        direction = "DOWN RIGHT";
+        break;
+      case 4:
+        direction = "DOWN LEFT";
+        break;
+      case 5:
+        direction = "UP";
+        break;
+      case 6:
+        direction = "DOWN";
+        break;
+      case 7:
+        direction = "LEFT";
+        break;
+      case 8:
+        direction = "RIGHT";
+        break;
+    }
+  }
+
+  else {
+    switch (hardCodeSequence[buttonsPressed + 1]) {
+      case 1:
+        direction = "UP LEFT";
+        break;
+      case 2:
+        direction = "UP RIGHT";
+        break;
+      case 3:
+        direction = "DOWN RIGHT";
+        break;
+      case 4:
+        direction = "DOWN LEFT";
+        break;
+      case 5:
+        direction = "UP";
+        break;
+      case 6:
+        direction = "DOWN";
+        break;
+      case 7:
+        direction = "LEFT";
+        break;
+      case 8:
+        direction = "RIGHT";
+        break;
+    }
+  }
+  return direction;
 }

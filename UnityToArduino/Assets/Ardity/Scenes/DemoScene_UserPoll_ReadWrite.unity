@@ -175,7 +175,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11442534, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
       propertyPath: portName
-      value: COM5
+      value: COM3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a65acf0cbf56b80419f74ebf0bc845f4, type: 3}
@@ -213,7 +213,6 @@ MonoBehaviour:
   serialController: {fileID: 272482843}
   voice: {fileID: 748090409}
   buttons: {fileID: 748090408}
-  queue: []
   intro1: {fileID: 8300000, guid: 7dae706a60526024e9a9c5d36e11bfb0, type: 3}
   intro2: {fileID: 8300000, guid: 14e400c655c62874395ab58d05df028b, type: 3}
   firstButton: {fileID: 8300000, guid: eb6267eee47146a43bf0ce6b9ccebb18, type: 3}
@@ -226,10 +225,14 @@ MonoBehaviour:
   done1: {fileID: 8300000, guid: a898d13af691da547aff6a60fd318c01, type: 3}
   done2: {fileID: 8300000, guid: 4c7e37be176b0c14189dc2b97833497c, type: 3}
   done3: {fileID: 8300000, guid: b52682ca80f0cc94584f053974c030a9, type: 3}
-  tutorial: {fileID: 8300000, guid: f27d89296d18f164b81e4f8b288aae9a, type: 3}
+  tutorial: {fileID: 8300000, guid: bcca85c9df31a8a468a0d15651260bd9, type: 3}
   hint1: {fileID: 8300000, guid: 27901cd515835b04aa04eefcfca30336, type: 3}
   hint2: {fileID: 8300000, guid: f27d89296d18f164b81e4f8b288aae9a, type: 3}
   hint3: {fileID: 8300000, guid: c71af6fcb36626446a03b79550fe4ac1, type: 3}
+  silence: {fileID: 8300000, guid: 471130955ae168846a26987c42a316b4, type: 3}
+  queue: []
+  timer: 0
+  silenceTimer: 0
 --- !u!4 &748090407
 Transform:
   m_ObjectHideFlags: 0
@@ -256,7 +259,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d5fbb810aab7d22429ddbbc3d490d7ba, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -352,7 +355,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 7dae706a60526024e9a9c5d36e11bfb0, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
