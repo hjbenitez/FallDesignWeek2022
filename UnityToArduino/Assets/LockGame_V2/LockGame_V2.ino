@@ -5,6 +5,10 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 Servo lockingLug;
 String code = "";
 
+//Audio checks
+bool intro2 = false;
+bool firstButton = false;
+
 int buttonsPressed = -1;
 
 bool easyBeaten = false;
@@ -27,6 +31,7 @@ void setup() {
   lockingLug.attach(13);
   lockingLug.write(90);  //locks the lock
   Serial.begin(9600);
+  
 }
 /*
 CODE CYPHER
@@ -40,6 +45,12 @@ CODE CYPHER
 8 = LEFT
 */
 void loop() {
+  if(!intro2) {
+    Serial.println("intro2");
+    intro2 = true;
+  }
+
+
   lcd.setCursor(0, 0);
   lcd.print(displayArray());
   if (!easyBeaten) {
@@ -54,16 +65,23 @@ void loop() {
         lcd.clear();
         lcd.setCursor(0, 1);
         lcd.print("CORRECT!");
+        Serial.println("done1");
 
         delay(5000);  //wait x amount of seconds to relock the lock
 
-        reset();
+        memset(currentSequence, 0, sizeof(currentSequence));
+        buttonsPressed = -1;
 
+        reset();
         easyBeaten = true;
       }
     } else if (currentSequence[buttonsPressed] != easyCodeSequence[buttonsPressed] && buttonsPressed != -1) {
       Serial.println("Incorrect Code");
-      reset();
+      buttonsPressed--;
+      removeFromSequence();
+      lockingLug.write(90);
+      digitalWrite(8, LOW);   
+      lcd.clear();
       wrongOrder();
     }
   }
@@ -81,15 +99,22 @@ void loop() {
         lcd.setCursor(0, 1);
         lcd.print("CORRECT!");
 
+        memset(currentSequence, 0, sizeof(currentSequence));
+        buttonsPressed = -1;
+        Serial.println("done2");
+
         delay(5000);  //wait x amount of seconds to relock the lock
 
         reset();
-
         mediumBeaten = true;
       }
     } else if (currentSequence[buttonsPressed] != mediumCodeSequence[buttonsPressed] && buttonsPressed != -1) {
       Serial.println("Incorrect Code");
-      reset();
+      buttonsPressed--;
+      removeFromSequence();
+      lockingLug.write(90);
+      digitalWrite(8, LOW);   
+      lcd.clear();
       wrongOrder();
     }
 
@@ -101,18 +126,29 @@ void loop() {
 
       if (buttonsPressed >= 7 && currentSequence[7] == hardCodeSequence[7]) {
         Serial.println("Correct Code! LockPickingLawyer would be proud!!");
+        Serial.println("done3");
+        delay(7000);
         lockingLug.write(0);  //unlocks lock
+        
         digitalWrite(8, HIGH);
         lcd.clear();
         lcd.setCursor(0, 1);
         lcd.print("CANDY TIME");
+
+        memset(currentSequence, 0, sizeof(currentSequence));
+        buttonsPressed = -1;
+       
         delay(5000);  //wait x amount of seconds to relock the lock
 
         reset();
       }
     } else if (currentSequence[buttonsPressed] != hardCodeSequence[buttonsPressed] && buttonsPressed != -1) {
       Serial.println("Incorrect Code");
-      reset();
+      buttonsPressed--;
+      removeFromSequence();
+      lockingLug.write(90);
+      digitalWrite(8, LOW);   
+      lcd.clear();
       wrongOrder();
     }
   }
@@ -120,6 +156,7 @@ void loop() {
   // Send some message when I receive 1-8 from the row of numbers
   switch (Serial.read()) {
     case '1':
+      Serial.println("general");
       assignValueToSequence(1);
       debug(9, 1);
       break;
@@ -158,8 +195,16 @@ void loop() {
       assignValueToSequence(8);
       debug(2, 8);
       break;
+    case '9':
+      lockingLug.write(0);
+      break;
+    case '0':
+      lockingLug.write(90);
+      break;
   }
+  
 }
+
 void correctNumber() {
   lcd.clear();
   lcd.setCursor(0, 1);
@@ -232,15 +277,12 @@ String dummy() {
 void debug(int pin, int num) {
   //digitalWrite(pin, HIGH);
   Serial.print("Code: ");
-  Serial.print(code);
+  Serial.print(displayArray());
   Serial.print(" - ");
   Serial.println(num);
 }
 
 void reset() {
-  buttonsPressed = -1;
-  code = "";
-  memset(currentSequence, 0, sizeof(currentSequence));
   lockingLug.write(90);
   digitalWrite(8, LOW);
 
@@ -273,6 +315,10 @@ void assignValueToSequence(int num) {
   }
 
   buttonsPressed++;
+  if(!firstButton) {
+    Serial.println("firstButton");
+    firstButton = true;
+  }
 }
 
 String displayArray() {
@@ -288,4 +334,13 @@ String displayArray() {
   }
 
   return code;
+}
+
+void removeFromSequence() {
+  for (int i = 0; i < 8; i++) {
+    if (currentSequence[i] == 0) {
+      currentSequence[i - 1] = 0;
+      break;
+    }
+  }
 }
